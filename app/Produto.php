@@ -1,0 +1,25 @@
+<?php
+
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Produto extends Model
+{
+    protected $fillable = ['nome', 'descricao', 'peso', 'unidade_id', 'fornecedor_id'];
+
+    public function ProdutoDetalhe() {
+        
+        return $this->hasOne('App\ProdutoDetalhe');
+        
+    }
+
+    public function fornecedor() {
+
+        return $this->belongsTo('App\Fornecedor');
+    }
+
+    public function pedidos() {
+        return $this->belongsToMany('App\Pedido', 'pedidos_produtos');
+    }
+}
