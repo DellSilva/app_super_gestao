@@ -27,7 +27,7 @@ class PedidoProdutoController extends Controller
     public function create(Pedido $pedido)
     {
         $produtos = Produto::all();
-        $pedido->produtos;
+        // $pedido->produtos;
         return view('app.pedido_produto.create', ['pedido' => $pedido, 'produtos' => $produtos]);
     }
 
@@ -51,6 +51,7 @@ class PedidoProdutoController extends Controller
 
         $request->validate($regras, $feedback);
 
+        //OS DADOS PODEM PERSISTIR ASSIM
         /*$pedidoProduto = new PedidoProduto();
         $pedidoProduto->pedido_id = $pedido->id;
         $pedidoProduto->produto_id = $request->get('produto_id');
@@ -62,6 +63,13 @@ class PedidoProdutoController extends Controller
             ['quantidade' => $request->get('quantidade')]
             
         );
+
+        //OS DADOS PODEM PERSISTIR ASSIM
+        /*$pedido->produtos()->attach([
+            $request->get('produto_id') => ['quantidade' => $request->get('quantidade')],
+            $request->get('produto_id') => ['quantidade' => $request->get('quantidade')],
+            $request->get('produto_id') => ['quantidade' => $request->get('quantidade')],
+        ]);*/
 
         return redirect()->route('pedido-produto.create', ['pedido' => $pedido->id]);
     }
@@ -106,8 +114,24 @@ class PedidoProdutoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(PedidoProduto $pedidoProduto, $pedido_id)
     {
-        //
+        // echo $pedido->id. ' - '.$produto->id;
+
+        //convencional
+        /*
+        PedidoProduto::where([
+            'pedido_id' => $pedido->id,
+            'produto_id' => $produto->id
+        ])->delete();
+        */
+
+        //detach (delete pelo relacionamento)
+        // $pedido->produtos()->detach($produto->id);
+
+        $pedidoProduto->delete(); 
+                
+        return redirect()->route('pedido-produto.create', ['pedido' => $pedido_id]);
+
     }
 }
